@@ -11,6 +11,8 @@
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "grommet": "^2.45.1",
+    "grommet-icons": "^4.12.4",
     "i": "^0.3.7",
     "npm": "^11.1.0",
     "react": "^19.0.0",
