@@ -15,6 +15,7 @@ export function Providers({children}: {children: React.ReactNode}) {
         embeddedWallets: {
           createOnLogin: 'users-without-wallets',
         },
+        loginMethods: ['email', 'wallet', 'google'],
       }}
     >
       {children}

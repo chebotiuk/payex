@@ -1,17 +1,23 @@
 import React from "react";
-import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Heading } from "grommet";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Nav, Anchor, CardHeader } from "grommet";
+import { Home, User } from "grommet-icons";
 import { usePrivy } from "@privy-io/react-auth";
 import { grommet } from "grommet/themes";
 
 import "./App.css";
 import { Providers } from "./Providers";
 import { SkeletFaded } from './SkeletFaded';
+import { Contacts } from './components/Contacts';
+import { Account } from './components/Account';
 
 function App() {
   return (
     <Grommet theme={grommet} full>
       <Providers>
-        <Main />
+        <Router>
+          <Main />
+        </Router>
       </Providers>
     </Grommet>
   );
@@ -26,29 +32,21 @@ function Main() {
     <Box fill align="center" justify="center" pad="medium" className="App">
       {ready ? (
         <Card width="large" background="light-1" elevation="large" pad="medium">
+          <CardHeader pad="medium">
+            <Nav direction="row" gap="medium">
+              <Anchor icon={<Home />} label="Home" as={Link} to="/" />
+              <Anchor icon={<User />} label="Contacts" as={Link} to="/contacts" />
+            </Nav>
+          </CardHeader>
           <CardBody>
             {authenticated ? (
-              <>
-                <Heading level={3} size="small">Logged in as: </Heading>
-                <Text>{user?.id ?? "Unknown User"}</Text>
-              </>
+              <Routes>
+                <Route path="/" element={<Account user={user} />} />
+                <Route path="/contacts" element={<Contacts />} />
+              </Routes>
             ) : (
               <Text size="large">Welcome! Please log in.</Text>
             )}
-            <br />
-            <Heading level={3} size="small" color="brand">
-              Linked accounts:
-            </Heading>
-            {user?.linkedAccounts.map((account) => {
-              const { address, type, walletClientType } = account as any;
-              return (
-                <>
-                  <Text>Address: {address}</Text>
-                  <Text>Type: {type}</Text>
-                  <Text>Client type: {walletClientType}</Text>
-                </>
-              )})
-            }
           </CardBody>
           <CardFooter pad={{ horizontal: "medium", vertical: "medium" }} justify="center">
             {authenticated ? (
@@ -61,14 +59,6 @@ function Main() {
       ) : (
         <SkeletFaded />
       )}
-    </Box>
-  );
-}
-
-function Loading() {
-  return (
-    <Box fill align="center" justify="center">
-      <Text size="large">Loading...</Text>
     </Box>
   );
 }
