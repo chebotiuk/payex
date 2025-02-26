@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Nav, Anchor, CardHeader } from "grommet";
-import { Home, User } from "grommet-icons";
+import { Home, User, Grow } from "grommet-icons";
 import { usePrivy } from "@privy-io/react-auth";
 import { grommet } from "grommet/themes";
 
@@ -10,6 +10,7 @@ import { Providers } from "./Providers";
 import { SkeletFaded } from './SkeletFaded';
 import { Contacts } from './components/Contacts';
 import { Account } from './components/Account';
+import { Balance } from './components/Balance';
 
 const App = memo(function() {
   return (
@@ -34,16 +35,12 @@ const Main = memo(function() {
         <Card width="large" background="light-1" elevation="large" pad="medium">
           <CardHeader pad="medium">
             <Nav direction="row" gap="medium">
-              <Anchor
-                icon={<Home />}
-                label="Home"
-                as={() => <Link to="/">Home</Link>}
-              />
-              <Anchor
-                icon={<User />}
-                label="Contacts"
-                as={() => <Link to="/contacts">Contacts</Link>}
-              />
+              {/* @ts-ignore */}
+              <Anchor icon={<Home />} label="Home" as={Link} to="/" />
+              {/* @ts-ignore */}
+              <Anchor icon={<User />} label="Contacts" as={Link} to="/contacts" />
+              {/* @ts-ignore */}
+              <Anchor icon={<Grow />} label="Balance" as={Link} to="/balance" />
             </Nav>
           </CardHeader>
           <CardBody>
@@ -51,6 +48,7 @@ const Main = memo(function() {
               <Routes>
                 <Route path="/" element={<Account user={user} />} />
                 <Route path="/contacts" element={<Contacts />} />
+                <Route path="/balance" element={<Balance />} />
               </Routes>
             ) : (
               <Text size="large">Welcome! Please log in.</Text>
