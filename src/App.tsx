@@ -1,4 +1,4 @@
-import React from "react";
+import React, { memo } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Nav, Anchor, CardHeader } from "grommet";
 import { Home, User } from "grommet-icons";
@@ -11,7 +11,7 @@ import { SkeletFaded } from './SkeletFaded';
 import { Contacts } from './components/Contacts';
 import { Account } from './components/Account';
 
-function App() {
+const App = memo(function() {
   return (
     <Grommet theme={grommet} full>
       <Providers>
@@ -21,9 +21,9 @@ function App() {
       </Providers>
     </Grommet>
   );
-}
+});
 
-function Main() {
+const Main = memo(function() {
   const { login, logout, ready, authenticated, user } = usePrivy();
 
   console.log("User data", user);
@@ -34,8 +34,16 @@ function Main() {
         <Card width="large" background="light-1" elevation="large" pad="medium">
           <CardHeader pad="medium">
             <Nav direction="row" gap="medium">
-              <Anchor icon={<Home />} label="Home" as={Link} to="/" />
-              <Anchor icon={<User />} label="Contacts" as={Link} to="/contacts" />
+              <Anchor
+                icon={<Home />}
+                label="Home"
+                as={() => <Link to="/">Home</Link>}
+              />
+              <Anchor
+                icon={<User />}
+                label="Contacts"
+                as={() => <Link to="/contacts">Contacts</Link>}
+              />
             </Nav>
           </CardHeader>
           <CardBody>
@@ -61,6 +69,6 @@ function Main() {
       )}
     </Box>
   );
-}
+});
 
 export default App;

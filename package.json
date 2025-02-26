@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@privy-io/react-auth": "^2.4.2",
+    "@privy-io/react-auth": "^2.4.5",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -11,6 +11,7 @@
     "@types/node": "^22.13.1",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
+    "ethers": "^6.13.5",
     "grommet": "^2.45.1",
     "grommet-icons": "^4.12.4",
     "i": "^0.3.7",
@@ -20,6 +21,7 @@
     "react-router-dom": "^7.1.5",
     "react-scripts": "5.0.1",
     "typescript": "^5.7.3",
+    "viem": "^2.23.5",
     "web-vitals": "^2.1.0"
   },
   "scripts": {

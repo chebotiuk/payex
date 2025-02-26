@@ -1,10 +1,13 @@
 import {PrivyProvider} from '@privy-io/react-auth';
+import { base } from "viem/chains";
 
 export function Providers({children}: {children: React.ReactNode}) {
   return (
     <PrivyProvider
       appId={process.env.REACT_APP_PRIVY_APP_ID as string}
+      // value={process.env.REACT_APP_PRIVY_APP_SECRET as string}
       config={{
+        defaultChain: base,
         // Customize Privy's appearance in your app
         appearance: {
           theme: 'light',
