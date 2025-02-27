@@ -11,6 +11,7 @@ import { SkeletFaded } from './SkeletFaded';
 import { Contacts } from './components/Contacts';
 import { Account } from './components/Account';
 import { Balance } from './components/Balance';
+import FiatOnRamp from './components/FiatOnRamp';
 
 const App = memo(function() {
   return (
@@ -49,6 +50,7 @@ const Main = memo(function() {
                 <Route path="/" element={<Account user={user} />} />
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/balance" element={<Balance />} />
+                <Route path="/onramp" element={<FiatOnRamp />} />
               </Routes>
             ) : (
               <Text size="large">Welcome! Please log in.</Text>

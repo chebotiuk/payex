@@ -6,8 +6,9 @@ import { ERC20_ABI } from '../abi';  // Replace with your actual USDC ABI
 
 const USDC_ADDRESS: `0x${string}` = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
-// URL для интеграции с Bridge API (замените на реальный)
-const BRIDGE_API_URL = "https://your-bridge-api.com/transfer"; 
+// URL for Circle API
+const CIRCLE_API_URL = "https://api.circle.com/v1"; // Replace with the correct Circle API URL
+const CIRCLE_API_KEY = "76867aa08063af283b1688e66f2a363c:ae4a45e4f048d45fcb0b248e55eb335e"; // Replace with your Circle API Key
 
 export const Balance = () => {
   const { wallets } = useWallets();
@@ -49,21 +50,22 @@ export const Balance = () => {
     fetchBalances();
   }, [wallet]);
 
-  // Пополнение через Bridge API
+  // Deposit through Circle API
   const handleDeposit = async (amount: number) => {
     setLoadingDeposit(true);
     setDepositSuccess(null); // Reset deposit success state
 
     try {
-      const response = await fetch(BRIDGE_API_URL, {
+      const response = await fetch(`${CIRCLE_API_URL}/transactions`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${CIRCLE_API_KEY}` // Use Circle API key for authorization
         },
         body: JSON.stringify({
-          userAddress: wallet?.address, // Добавить адрес пользователя для пополнения
-          amount: amount, // Сумма пополнения
-          currency: "USDC", // Тип валюты
+          userAddress: wallet?.address, // Add the user address to the deposit request
+          amount: amount, // Amount to deposit
+          currency: "USDC", // The currency for the deposit (USDC)
         }),
       });
 
@@ -73,11 +75,8 @@ export const Balance = () => {
 
       const data = await response.json();
       console.log("Deposit response:", data);
-      // После успешного пополнения можно обновить баланс (например, через API или локально)
+      // After successful deposit, you can update balance (maybe call fetchBalances again)
       setDepositSuccess(true);
-
-      // Обновим баланс после пополнения
-      // fetchBalances();
     } catch (error) {
       console.error("Error during deposit:", error);
       setDepositSuccess(false);
@@ -109,19 +108,19 @@ export const Balance = () => {
               <Text size="large">USDC: {usdcBalance} USDC</Text>
             </Box>
           </Box>
-          
-          {/* Кнопка пополнения */}
+
+          {/* Deposit Button */}
           <Box direction="row" justify="center" margin={{ top: "medium" }}>
             <Button
               label="Deposit USDC"
-              onClick={() => handleDeposit(100)} // Пополнение на 100 USDC (например)
+              onClick={() => handleDeposit(100)} // Example: Deposit 100 USDC
               primary
               color="brand"
               disabled={loadingDeposit}
             />
           </Box>
 
-          {/* Сообщение об успешном или неудачном пополнении */}
+          {/* Success or Failure Message */}
           {loadingDeposit && (
             <Box justify="center" align="center" margin={{ top: "small" }}>
               <Spinner size="small" />
