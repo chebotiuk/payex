@@ -1,8 +1,8 @@
-import React, { memo } from "react";
+import React, { memo, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Nav, Anchor, CardHeader } from "grommet";
-import { Home, User, Grow, Atm } from "grommet-icons";
-import { usePrivy } from "@privy-io/react-auth";
+import { Home, User, Grow, Atm, History } from "grommet-icons";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { grommet } from "grommet/themes";
 
 import "./App.css";
@@ -14,6 +14,9 @@ import { Balance } from './components/Balance';
 import { FiatOnRamp } from './components/FiatOnRamp';
 import { Send } from './components/Send';
 import { Invoices } from './components/Invoices';
+import { SendInvoice } from './components/SendInvoice';
+import axios from 'axios';
+import { MyInvoices } from './components/MyInvoices';
 
 const App = memo(function() {
   return (
@@ -29,8 +32,12 @@ const App = memo(function() {
 
 const Main = memo(function() {
   const { login, logout, ready, authenticated, user } = usePrivy();
-
   console.log("User data", user);
+
+  useEffect(() => {
+    if (!user) return;
+    axios.get(`${process.env.REACT_APP_API_URL}/auth?address=` + user.wallet?.address || '');
+  }, [user])
 
   return (
     <Box fill align="center" justify="center" pad="medium" className="App">
@@ -45,7 +52,9 @@ const Main = memo(function() {
               {/* @ts-ignore */}
               <Anchor icon={<Grow />} label="Balance" as={Link} to="/balance" />
               {/* @ts-ignore */}
-              <Anchor icon={<Atm />} label="Invoices (in)" as={Link} to="/invoices" />
+              <Anchor icon={<Atm />} label="Invoices" as={Link} to="/invoices" />
+              {/* @ts-ignore */}
+              <Anchor icon={<History />} label="Issued docs" as={Link} to="/myinvoices" />
             </Nav>
           </CardHeader>
           <CardBody>
@@ -56,8 +65,9 @@ const Main = memo(function() {
                 <Route path="/balance" element={<Balance />} />
                 <Route path="/onramp" element={<FiatOnRamp />} />
                 <Route path="/send" element={<Send />} />
-                
-                <Route path="/Invoices" element={<Invoices />} />
+                <Route path="/send-invoice" element={<SendInvoice />} />
+                <Route path="/invoices" element={<Invoices />} />
+                <Route path="/myinvoices" element={<MyInvoices />} />
               </Routes>
             ) : (
               <Text size="large">Welcome! Please log in.</Text>

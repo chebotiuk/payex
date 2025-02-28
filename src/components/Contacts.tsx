@@ -1,78 +1,45 @@
-import React, { memo } from "react";
+import React, { memo, useEffect, useState } from "react";
 import { Text, Avatar, Tip, Button, Box } from "grommet";
-import { ethers } from "ethers";
 import { Link } from "react-router-dom";
+import axios from "axios"; // Import axios
 
 import { useWallets } from "@privy-io/react-auth";
-import { base } from "viem/chains";
-import { createWalletClient, custom, encodeFunctionData } from 'viem';
-import { INVOICE_CONTRACT_ABI, USDC_TRANSFER_ABI } from '../abi';
-import axios from 'axios';
-
-// Sample contacts list
-const contacts = [
-  { name: "Brandon Johnson", walletAddress: "0x6E5a3d13F1c4A163965baef0AA11D7717B877478", twitter: "@bran" },
-  { name: "Bob Smith", walletAddress: "0x513AC192AF1CAd0159530e59467F8abEEe7939B4", twitter: "@bobsmith" },
-  { name: "Charlie Lee", walletAddress: "0xb35017C969a18E230cf0Bab4dBBAfaA52a3f6867", twitter: "@charlielee" },
-  { name: "Diana Ross", walletAddress: "0xabc...mnop", twitter: "@dianar" },
-  { name: "Ethan Hunt", walletAddress: "0xdef...qrst", twitter: "@ethanh" },
-];
 
 export const Contacts = memo(() => {
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Replace this with your desired wallet
-                            // set Wallet switch with state
+  const [contacts, setContacts] = useState([]); // State to hold contacts data
+  const [loading, setLoading] = useState(true); // State for loading status
+  const [error, setError] = useState(null); // State for error handling
 
-  const addInvoice = async (recipientAddress, invoiceAmount = 1, description = 'test', celestiaHash ='default_hash') => {
-    if (!wallet) return;
-
-    // Switch to the desired blockchain if needed
-    await wallet.switchChain(base.id);
-
-    const provider = await wallet.getEthereumProvider();
-    const walletClient = createWalletClient({
-      chain: base,
-      transport: custom(provider),
-    });
-
-    const INVOICE_CONTRACT_ADDRESS = "0x1bbA654d259Eb0330B2171ee89D3066DEA9541B4";
-    const USDC_ADDRESS: `0x${string}` = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
-
-    try {
-      // Register invoice on server side db (Replace with Celestia in future)
-      const { data: { id: invoiceId } } = await axios.post("http://localhost:8000/invoice", {
-        to: recipientAddress,
-        requester: wallet.address,
-        network: "base",
-        token: USDC_ADDRESS,
-        comment: "USDC",
-        amount: invoiceAmount,
-      });
-
-      const amount = BigInt(Number(invoiceAmount) * 1_000_000)
-
-      const txData = encodeFunctionData({
-        abi: INVOICE_CONTRACT_ABI,
-        functionName: "addInvoice",
-        args: [invoiceId, amount, description, celestiaHash, recipientAddress],
-      });
-
-      const hash = await walletClient.sendTransaction({
-        account: wallet.address as `0x${string}`,
-        to: INVOICE_CONTRACT_ADDRESS,
-        data: txData,
-        kzg: undefined,
-        chain: base,
-      });
-
-      console.log("Transaction sent:", hash);
-    } catch (error) {
-      console.error("Transaction failed:", error);
+  // Fetch contacts from the API when the component mounts
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_URL}/users`);
+        setContacts(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError("Error fetching contacts");
+        setLoading(false);
+      }
     };
-  };
+
+    fetchContacts();
+  }, []);
 
   console.dir(wallets);
-  return contacts.map((contact, index) => (
+
+  if (loading) {
+    return <Text>Loading...</Text>; // Display loading text while fetching data
+  }
+
+  if (error) {
+    return <Text>{error}</Text>; // Display error message if there is an issue
+  }
+
+  // do not show my account
+  return contacts.map((contact, index) => contact.walletAddress !== wallet.address as string && (
     <Box direction="row" align="center" gap="small" key={index} pad="small" style={{ flex: "0 1 auto", borderBottom: "1px grey solid" }}>
       <Tip content={`Twitter: ${contact.twitter}`} dropProps={{ align: { top: "bottom" } }}>
         <Avatar size="medium" background="brand" style={{ cursor: 'pointer' }}>
@@ -89,7 +56,9 @@ export const Contacts = memo(() => {
             <Link to={`/send?address=${contact.walletAddress}`}>
               <Button size='xsmall' label="Send transaction" primary />
             </Link>
-            <Button size='xsmall' label="Send invoice" onClick={() => { addInvoice(contact.walletAddress) }} primary />
+            <Link to={`/send-invoice?address=${contact.walletAddress}`}>
+              <Button size='xsmall' label="Send invoice" primary />
+            </Link>
           </Box>
         </Box>
       </Box>

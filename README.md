@@ -2,6 +2,14 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Environment Variables
+
+Create a `.env` file to store sensitive information:
+
+```
+REACT_APP_PRIVY_APP_ID==YOUR_PRIVY_APP_ID
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

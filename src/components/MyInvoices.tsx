@@ -6,7 +6,7 @@ import { createWalletClient, custom, encodeFunctionData } from 'viem';
 import { useWallets } from "@privy-io/react-auth";
 import { ERC20_ABI, INVOICE_CONTRACT_ABI } from '../abi';
 
-export function Invoices() {
+export function MyInvoices() {
   const { wallets } = useWallets();
   const wallet = wallets[0]; // Assume first wallet is the active one
   const walletAddress = wallet?.address || "";
@@ -22,7 +22,7 @@ export function Invoices() {
     if (!walletAddress) return;
     setLoading(true);
     try {
-      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice?to=` + wallet?.address);
+      const response = await axios.get(`${process.env.REACT_APP_API_URL}/invoice?requester=` + wallet?.address);
       setInvoices(response.data);
     } catch (error) {
       console.error("Error fetching invoices:", error);
@@ -106,10 +106,12 @@ export function Invoices() {
     }
   };
 
+
+
   console.log(invoices)
   return (
     <Box pad="medium" width="large" alignSelf="center">
-      <Heading level={2} margin={{ bottom: "small" }}>Incoming Invoices</Heading>
+      <Heading level={2} margin={{ bottom: "small" }}>My Invoices (out)</Heading>
       <Text size="small" margin={{ bottom: "small" }} color="dark-3">
         Wallet: {walletAddress || "Not connected"}
       </Text>
@@ -129,10 +131,10 @@ export function Invoices() {
                 <Text size="small"><b>Amount:</b> {item.amount} USDC</Text>
                 <Text size="small"><b>ID:</b> {item.id}</Text>
                 <Text size="small"><b>Comment:</b> {item.comment}</Text>
-                <Text size="small"><b>Requester:</b> {item.requester ? (item.requester.substring(0, 6) + '...' + item.requester.substring(item.requester.length - 4)) : 'N/A'}</Text>
+                <Text size="small"><b>To:</b> {item.to ? (item.to.substring(0, 6) + '...' + item.to.substring(item.to.length - 4)) : 'N/A'}</Text>
                 {item.status === "paid"
-                  ? <Button size='xsmall' label="Paid" onClick={() => { }} style={{ flexBasis: '120px', backgroundColor: '#98FB98' }} disabled />
-                  : <Button size='xsmall' label="Pay invoice" onClick={() => { payInvoice(item.id, item.amount) }} style={{ flexBasis: '120px' }} primary />
+                  ? <Text size="small" color="green" style={{ flexBasis: '80px' }}><b>Paid</b></Text>
+                  : <Text size="small" color="status-warning" style={{ flexBasis: '80px' }}><b>Pending</b></Text>
                 }
               </>
             )}

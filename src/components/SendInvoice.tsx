@@ -4,12 +4,16 @@ import { Button, TextInput, Box, Text, Notification } from "grommet";
 import { useWallets } from "@privy-io/react-auth";
 import { createWalletClient, custom, encodeFunctionData } from 'viem';
 import { base } from "viem/chains";
-import { USDC_TRANSFER_ABI } from '../abi';  // Assuming USDC transfer ABI is here
+import { INVOICE_CONTRACT_ABI, USDC_TRANSFER_ABI } from '../abi';  // Assuming USDC transfer ABI is here
+import axios from 'axios';
+
+const description = 'Demo';
+const celestiaHash = 'hash_demo'; // Change to real hash
 
 export const SendInvoice = () => {
   const { wallets } = useWallets();
   const wallet = wallets[0];
-  const [amount, setAmount] = useState("");
+  const [invoiceAmount, setInvoiceAmount] = useState("");
   const [recipientAddress, setRecipientAddress] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -23,7 +27,7 @@ export const SendInvoice = () => {
   }, [location]);
 
   const handleSendTransaction = async () => {
-    if (!wallets[0] || !recipientAddress || !amount) return;
+    if (!wallets[0] || !recipientAddress || !invoiceAmount) return;
 
     setLoading(true);
     setToastMessage("Sending transaction...");
@@ -35,18 +39,32 @@ export const SendInvoice = () => {
       transport: custom(provider),
     });
 
+    const INVOICE_CONTRACT_ADDRESS = "0x1bbA654d259Eb0330B2171ee89D3066DEA9541B4";
     const USDC_ADDRESS: `0x${string}` = "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913";
 
-    const amountIn = BigInt(Number(amount) * 1_000_000);
     try {
+      // Register invoice on server side db (Replace with Celestia in future)
+      const { data: { id: invoiceId } } = await axios.post(`${process.env.REACT_APP_API_URL}/invoice`, {
+        to: recipientAddress,
+        requester: wallet.address,
+        network: "base",
+        token: USDC_ADDRESS,
+        comment: "USDC",
+        amount: invoiceAmount,
+      });
+
+      const amount = BigInt(Number(invoiceAmount) * 1_000_000)
+
+      const txData = encodeFunctionData({
+        abi: INVOICE_CONTRACT_ABI,
+        functionName: "addInvoice",
+        args: [invoiceId, amount, description, celestiaHash, recipientAddress],
+      });
+
       const hash = await walletClient.sendTransaction({
         account: wallet.address as `0x${string}`,
-        to: USDC_ADDRESS,
-        data: encodeFunctionData({
-          abi: USDC_TRANSFER_ABI,
-          functionName: "transfer",
-          args: [recipientAddress, amountIn],
-        }),
+        to: INVOICE_CONTRACT_ADDRESS,
+        data: txData,
         kzg: undefined,
         chain: base,
       });
@@ -69,7 +87,7 @@ export const SendInvoice = () => {
     // Ensure that the value has at most two decimal places
     const regex = /^\d*\.?\d{0,2}$/;
     if (regex.test(value)) {
-      setAmount(value);
+      setInvoiceAmount(value);
     }
   };
 
@@ -92,7 +110,7 @@ export const SendInvoice = () => {
       <Box pad="medium" width="medium">
         <TextInput
           placeholder="Amount (in USDC)"
-          value={amount}
+          value={invoiceAmount}
           onChange={handleAmountChange}
           type="number"
           disabled={loading}
@@ -102,7 +120,7 @@ export const SendInvoice = () => {
           label="Send"
           primary
           onClick={handleSendTransaction}
-          disabled={loading || !amount || !recipientAddress}
+          disabled={loading || !invoiceAmount || !recipientAddress}
         />
       </Box>
     </Box>
