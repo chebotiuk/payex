@@ -9,7 +9,7 @@ const CIRCLE_API_URL = "https://api.circle.com/v1/fiat/onramp";
 // Your Circle API key (replace with your actual API key)
 const CIRCLE_API_KEY = "3b3ba8e474f6ba84be64c51b7bc8fc7a:6b2c091ab17e6f25dff0007eaaa560eb";
 
-const FiatOnRamp = () => {
+export const FiatOnRamp = () => {
   const { wallets } = useWallets();
   const [amount, setAmount] = useState("");
   const [loading, setLoading] = useState(false);
@@ -108,5 +108,3 @@ const FiatOnRamp = () => {
     </Box>
   );
 };
-
-export default FiatOnRamp;

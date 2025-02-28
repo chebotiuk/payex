@@ -261,6 +261,12 @@ export const INVOICE_CONTRACT_ABI = [
         "internalType": "address",
         "name": "recipient",
         "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "issuer",
+        "type": "address"
       }
     ],
     "name": "InvoiceCreated",
@@ -313,6 +319,11 @@ export const INVOICE_CONTRACT_ABI = [
       {
         "internalType": "address",
         "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "issuer",
         "type": "address"
       },
       {

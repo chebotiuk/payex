@@ -1,7 +1,7 @@
 import React, { memo } from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import { Grommet, Box, Button, Card, CardBody, CardFooter, Text, Nav, Anchor, CardHeader } from "grommet";
-import { Home, User, Grow } from "grommet-icons";
+import { Home, User, Grow, Atm } from "grommet-icons";
 import { usePrivy } from "@privy-io/react-auth";
 import { grommet } from "grommet/themes";
 
@@ -11,7 +11,9 @@ import { SkeletFaded } from './SkeletFaded';
 import { Contacts } from './components/Contacts';
 import { Account } from './components/Account';
 import { Balance } from './components/Balance';
-import FiatOnRamp from './components/FiatOnRamp';
+import { FiatOnRamp } from './components/FiatOnRamp';
+import { Send } from './components/Send';
+import { Invoices } from './components/Invoices';
 
 const App = memo(function() {
   return (
@@ -42,6 +44,8 @@ const Main = memo(function() {
               <Anchor icon={<User />} label="Contacts" as={Link} to="/contacts" />
               {/* @ts-ignore */}
               <Anchor icon={<Grow />} label="Balance" as={Link} to="/balance" />
+              {/* @ts-ignore */}
+              <Anchor icon={<Atm />} label="Invoices (in)" as={Link} to="/invoices" />
             </Nav>
           </CardHeader>
           <CardBody>
@@ -51,6 +55,9 @@ const Main = memo(function() {
                 <Route path="/contacts" element={<Contacts />} />
                 <Route path="/balance" element={<Balance />} />
                 <Route path="/onramp" element={<FiatOnRamp />} />
+                <Route path="/send" element={<Send />} />
+                
+                <Route path="/Invoices" element={<Invoices />} />
               </Routes>
             ) : (
               <Text size="large">Welcome! Please log in.</Text>
