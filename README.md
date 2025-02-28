@@ -3,10 +3,12 @@
 ## Corresponding Repositories
 
 1. **[API Backend Service](https://github.com/chebotiuk/payex-api)**  
+   `https://github.com/chebotiuk/payex-api`
    This service is used to store and process extra data for app usability. It is required to run the app locally.
    (IMPORTANT! This service is required in order to run app)
 
-2. **[Smart Contract on Solidity](https://github.com/chebotiuk/payex_solidity)**  
+2. **[Smart Contract on Solidity](https://github.com/chebotiuk/payex_solidity)**
+  `https://github.com/chebotiuk/payex_solidity`
    This repository contains the invoice management - smart contract code written in Solidity & smart contract deployment scripts.
 
 
