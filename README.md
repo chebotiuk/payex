@@ -1,6 +1,18 @@
+# PayEx App
+
+## Corresponding Repositories
+
+1. **[API Backend Service](https://github.com/chebotiuk/payex-api)**  
+   This service is used to store and process extra data for app usability. It is required to run the app locally.
+   (IMPORTANT! This service is required in order to run app)
+
+2. **[Smart Contract on Solidity](https://github.com/chebotiuk/payex_solidity)**  
+   This repository contains the invoice management - smart contract code written in Solidity & smart contract deployment scripts.
+
+
 # Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a [React App](https://github.com/facebook/create-react-app) SPA.
 
 ## Environment Variables
 
@@ -8,7 +20,10 @@ Create a `.env` file to store sensitive information:
 
 ```
 REACT_APP_PRIVY_APP_ID==YOUR_PRIVY_APP_ID
+REACT_APP_API_URL=http://localhost:8000
 ```
+
+or set different REACT_APP_API_URL for stg or prod env...
 
 ## Available Scripts
 

@@ -70,7 +70,7 @@ const Main = memo(function() {
                 <Route path="/myinvoices" element={<MyInvoices />} />
               </Routes>
             ) : (
-              <Text size="large">Welcome! Please log in.</Text>
+                <Text size="large">Welcome to Payex Payment App!🥁 Please log in.⛺</Text>
             )}
           </CardBody>
           <CardFooter pad={{ horizontal: "medium", vertical: "medium" }} justify="center">

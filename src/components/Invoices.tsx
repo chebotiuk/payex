@@ -100,6 +100,13 @@ export function Invoices() {
         kzg: undefined,
       });
 
+      axios.post(`${process.env.REACT_APP_API_URL}/invoice`, {
+        invoiceId,
+        type: "receipt",
+        status: "paid",
+        txHash
+      });
+
       console.log("Invoice paid! Transaction Hash:", txHash);
     } catch (error) {
       console.error("Payment failed:", error);
